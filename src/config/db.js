@@ -1,6 +1,6 @@
 const { Sequelize } = require("sequelize");
 
-const sequelize = new Sequelize("moviedb", "root", "ley6895@", {
+const sequelize = new Sequelize("moviedb_cli", "root", "ley6895@", {
   host: "localhost",
   port: 3306,
   dialect: "mysql",
@@ -10,7 +10,7 @@ const sequelize = new Sequelize("moviedb", "root", "ley6895@", {
 const connectDB = async () => {
   try {
     await sequelize.authenticate();
-    console.log("MySQL Database connected using Sequelize");
+    console.log("moviedb_cli Database connected!");
   } catch (error) {
     console.error("Error connecting to database:", error);
     process.exit(1);

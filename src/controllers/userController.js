@@ -36,19 +36,19 @@ exports.signup = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, salt);
 
     const [insertResult] = await sequelize.query(
-      `INSERT INTO users (username, email, password, role_id, created_at, updated_at)
+      `INSERT INTO users (username, email, password, role_id, createdAt, updatedAt)
        VALUES (?, ?, ?, ?, NOW(), NOW())`,
       { replacements: [username, email, hashedPassword, userRole.id] }
     );
 
     const userId = insertResult;
-    console.log('is of user is',userId)
+    console.log('id of user is',userId)
     if (!userId) {
       return res.status(500).json({ message: "Failed to create user" });
     }
 
     await sequelize.query(
-      `INSERT INTO user_permissions (user_id, created_at, updated_at)
+      `INSERT INTO userpermissions (user_id, createdAt, updatedAt)
        VALUES (?, NOW(), NOW())`,
       { replacements: [userId] }
     );

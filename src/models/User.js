@@ -1,14 +1,39 @@
-const {sequelize} = require("../config/db");
+"use strict";
+module.exports = (sequelize, DataTypes) => {
+  const User = sequelize.define(
+    "User",
+    {
+      username: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      email: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+      },
+      password: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      role_id: {
+        type: DataTypes.INTEGER,
+        references: {
+          model: "Roles",
+          key: "id",
+        },
+      },
+    },
+    {
+      tableName: "Users",
+      timestamps: true,
+      underscored: true,
+    }
+  );
 
-sequelize.query(`
-    CREATE TABLE IF NOT EXISTS users (
-      id INT AUTO_INCREMENT PRIMARY KEY,
-      username VARCHAR(255) NOT NULL,
-      email VARCHAR(255) NOT NULL UNIQUE,
-      password VARCHAR(255) NOT NULL,
-      role_id INT,
-      FOREIGN KEY (role_id) REFERENCES roles(id),
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-    )
-`);
+  User.associate = (models) => {
+    User.belongsTo(models.Role, { foreignKey: "role_id", as: "role" });
+  };
+
+  return User;
+};

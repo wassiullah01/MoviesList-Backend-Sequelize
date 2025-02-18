@@ -1,10 +1,28 @@
-const {sequelize} = require("../config/db");
+"use strict";
+module.exports = (sequelize, DataTypes) => {
+  const Permission = sequelize.define(
+    "Permission",
+    {
+      name: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+    },
+    {
+      tableName: "Permissions",
+      timestamps: true,
+      underscored: true,
+    }
+  );
 
-sequelize.query(`
-    CREATE TABLE IF NOT EXISTS permissions (
-      id INT AUTO_INCREMENT PRIMARY KEY,
-      name VARCHAR(255) NOT NULL,
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-    )
-`);  
+  Permission.associate = (models) => {
+    Permission.belongsToMany(models.User, {
+      through: models.UserPermission,
+      foreignKey: "permission_id",
+      otherKey: "user_id",
+      as: "users",
+    });
+  };
+
+  return Permission;
+};

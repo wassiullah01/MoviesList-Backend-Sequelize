@@ -17,7 +17,7 @@ const getAdminPermissions = async (req, res) => {
 
         const userPermissions = await sequelize.query(
             `SELECT up.user_id, u.email, p.name AS permission 
-             FROM user_permissions up
+             FROM userpermissions up
              JOIN users u ON up.user_id = u.id
              JOIN permissions p ON up.permission_id = p.id`,
             { type: QueryTypes.SELECT }
@@ -123,13 +123,13 @@ const updateUserPermissions = async (req, res) => {
         const permissionId = permissions[0].id;
 
         const userPermissions = await sequelize.query(
-            `SELECT id FROM user_permissions WHERE user_id = ? AND permission_id = ?`,
+            `SELECT id FROM userpermissions WHERE user_id = ? AND permission_id = ?`,
             { replacements: [userId, permissionId], type: QueryTypes.SELECT }
         );
 
         if (!userPermissions.length) {
             await sequelize.query(
-                `INSERT INTO user_permissions (user_id, permission_id, created_at, updated_at) VALUES (?, ?, NOW(), NOW())`,
+                `INSERT INTO userpermissions (user_id, permission_id, createdAt, updatedAt) VALUES (?, ?, NOW(), NOW())`,
                 { replacements: [userId, permissionId] }
             );
             const response = await getUserPermissionsList(email);
@@ -141,7 +141,7 @@ const updateUserPermissions = async (req, res) => {
         }
 
         await sequelize.query(
-            `DELETE FROM user_permissions WHERE user_id = ? AND permission_id = ?`,
+            `DELETE FROM userpermissions WHERE user_id = ? AND permission_id = ?`,
             { replacements: [userId, permissionId] }
         );
 
@@ -173,7 +173,7 @@ async function getUserPermissionsList(email) {
 
     const permissions = await sequelize.query(
         `SELECT p.name AS permission 
-         FROM user_permissions up
+         FROM userpermissions up
          JOIN permissions p ON up.permission_id = p.id
          WHERE up.user_id = ?`,
         { replacements: [userId], type: QueryTypes.SELECT }

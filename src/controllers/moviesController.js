@@ -57,11 +57,11 @@ exports.updateMovie = async (req, res) => {
         );
 
         if (result.affectedRows === 0) return res.status(404).json({ message: 'Movie not found' });
-
+        
         const [updatedMovie] = await sequelize.query(`SELECT * FROM movies WHERE id = ?`, {
             replacements: [req.params.id]
         });
-
+        
         res.json(updatedMovie[0]);
     } catch (error) {
         res.status(400).json({ message: error.message });
